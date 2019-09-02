@@ -1,0 +1,23 @@
+Given a parking lot that can handle both cars and busses implement logic to park a car and a bus given the following constraints:
+- a car can park on any given space
+- a bus can park lengthwise on any contiguous 5 spaces
+
+Preconditions:
+- the parking lot has 100 spaces
+- parking spaces are grouped in 10 contiguous spaces (e.g. 1 to 10, 11 to 20 and soon)
+
+Requirements:
+- define main entities
+- implement parking logic for car and buss
+- unit test for parking logic
+
+Hint :
+
+interface Parking {
+	boolean isParkingPlaceAvailable(Vehicle vehicle);
+	boolean parkCar();
+	boolean parkBus();
+	...
+	// Can be extended
+}
+
