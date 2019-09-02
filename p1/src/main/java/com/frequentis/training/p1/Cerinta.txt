@@ -1,0 +1,13 @@
+Given a class type, return the percentage ratio between the simple properties and complex property types. Use spring-beans utilities (BeanUtils) to get information regarding the class properties (when needed).
+
+<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>? </version>
+</dependency>
+
+Ex: For the attached Furniture class, the result is 75 (75% of the properties are simple (String, Boolean, etc), with the exception of the Price).
+For the Chair, the result is 80, due to the extra Boolean property.
+
+Bonus point: get the same statistic on an entire package. 
+
