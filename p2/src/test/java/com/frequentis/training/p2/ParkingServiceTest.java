@@ -15,8 +15,45 @@ public class ParkingServiceTest {
     private static final boolean[][] NO_FREE_PLACES = new boolean[][]{
             {false, false, false, false, false}
     };
+    private static final boolean[][] ENOUGH_PLACE_FOR_A_CAR_OR_BUS = new boolean[][]{
+            {false, true, true, true, true, true, false, true}
+    };
+    private static final boolean[][] ENOUGH_PLACE_FOR_A_BUS = new boolean[][]{
+            {false, false, true, true, true, true, true, true, true, true},
+            {false, false, false, false, false, false, false, true, true, false}
+    };
 
     private Parking sut;
+
+    @Test
+    public void parkBus_busParkedAlreadyAndNotEnoughPlaceLeft_returnsFalse() {
+        // Given
+        sut = new ParkingService(ENOUGH_PLACE_FOR_A_BUS);
+        boolean actualReturnValue = sut.parkBus();
+        assertTrue(actualReturnValue);
+
+        // When
+        boolean busParked = sut.parkBus();
+
+        // Then
+        assertFalse(busParked);
+    }
+
+
+    @Test
+    public void parkBus_carParkedBefore_returnsFalse() {
+        // Given
+        sut = new ParkingService(ENOUGH_PLACE_FOR_A_CAR_OR_BUS);
+        boolean actualReturnValue = sut.parkCar();
+        assertTrue(actualReturnValue);
+
+        // When
+        boolean busParked = sut.parkBus();
+
+        // Then
+        assertFalse(busParked);
+    }
+
 
     @Test
     public void isParkingPlaceAvailable_vehicleIsParkingAndThereAreFreePlace_shallNotModifyAvailablePlaces() {

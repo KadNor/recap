@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PropertyAnalyzerTest {
 
-    private final static double DELTA = 0.01;
+    private final static double DELTA = 0.00001;
     private PropertyAnalyzer sut;
 
     @BeforeEach
@@ -23,7 +23,7 @@ class PropertyAnalyzerTest {
     void getPropertyComplexityRatio_FurnitureClassIsGiven_shallReturnTheRatio() {
         // Given
         Class<?> testClass = Furniture.class;
-        double expected = 66.66;
+        double expected = 66.6666666666;
 
         // When
         double actual = sut.getPropertyComplexityRatio(testClass);
@@ -62,7 +62,7 @@ class PropertyAnalyzerTest {
     void getPackagePropertyComplexityRatio_packageIsGiven_shallReturnTheRatio() {
         // Given
         String packageName = "com.frequentis.training.p1";
-        double expected = 79.16;
+        double expected = 79.1666666666;
 
         // When
         double actual = sut.getPackagePropertyComplexityRatio(packageName);

@@ -1,7 +1,10 @@
 package com.frequentis.training;
 
 import java.beans.PropertyDescriptor;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.springframework.beans.BeanUtils;
@@ -9,19 +12,14 @@ import org.springframework.beans.BeanUtils;
 public class PropertyAnalyzer {
 
     public double getPropertyComplexityRatio(Class<?> clazz) {
-        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(clazz);
-        int simpleTypeCount = 0;
-        int complexTypeCount = 0;
+        PropertyDescriptor[] allPropertyDescriptors = BeanUtils.getPropertyDescriptors(clazz);
+        List<PropertyDescriptor> filteredPropertyDescriptors = removeClassPropertyDescriptor(allPropertyDescriptors);
 
-        for (int i = 1; i < propertyDescriptors.length; ++i) {
-            if (BeanUtils.isSimpleProperty(propertyDescriptors[i].getPropertyType())) {
-                simpleTypeCount++;
-            } else {
-                complexTypeCount++;
-            }
-        }
+        long simpleTypeCount = filteredPropertyDescriptors.stream()
+                                                          .filter(p -> BeanUtils.isSimpleProperty(p.getPropertyType()))
+                                                          .count();
 
-        return ((double) simpleTypeCount) / (simpleTypeCount + complexTypeCount) * 100;
+        return ((double) simpleTypeCount) / filteredPropertyDescriptors.size() * 100;
     }
 
     public double getPackagePropertyComplexityRatio(final String packageName) {
@@ -32,5 +30,14 @@ public class PropertyAnalyzer {
                       .mapToDouble(this::getPropertyComplexityRatio)
                       .average()
                       .orElse(0.0);
+    }
+
+    /**
+     * The first element in the list is always the Class property descriptor.
+     */
+    private List<PropertyDescriptor> removeClassPropertyDescriptor(final PropertyDescriptor[] propertyDescriptors) {
+        return Arrays.stream(propertyDescriptors)
+                     .skip(1)
+                     .collect(Collectors.toList());
     }
 }

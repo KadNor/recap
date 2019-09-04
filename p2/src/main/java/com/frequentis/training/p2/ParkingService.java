@@ -2,6 +2,7 @@ package com.frequentis.training.p2;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class ParkingService implements Parking {
 
@@ -9,9 +10,9 @@ public class ParkingService implements Parking {
         private int row;
         private int column;
 
-        private ParkingLocation(final int row, final int colum) {
+        private ParkingLocation(final int row, final int column) {
             this.row = row;
-            this.column = colum;
+            this.column = column;
         }
     }
 
@@ -24,16 +25,8 @@ public class ParkingService implements Parking {
     }
 
     public ParkingService(final boolean[][] parkingPlaces) {
-        this.parkingPlaces = parkingPlaces;
-        this.availableSpaces = Arrays.stream(parkingPlaces).mapToInt(row -> {
-            int count = 0;
-            for (boolean place : row) {
-                if (place) {
-                    count++;
-                }
-            }
-            return count;
-        }).sum();
+        this.parkingPlaces = Arrays.stream(parkingPlaces).map(boolean[]::clone).toArray(boolean[][]::new);
+        this.availableSpaces = calculateAvailableSpaces();
     }
 
     @Override
@@ -50,10 +43,12 @@ public class ParkingService implements Parking {
         if (availableSpaces > 0) {
             for (int i = 0; i < parkingPlaces.length; ++i) {
                 for (int j = 0; j < parkingPlaces[i].length; ++j) {
-                    parkingPlaces[i][j] = false;
-                    availableSpaces--;
+                    if (parkingPlaces[i][j]) {
+                        parkingPlaces[i][j] = false;
+                        availableSpaces--;
 
-                    return true;
+                        return true;
+                    }
                 }
             }
         }
@@ -69,7 +64,7 @@ public class ParkingService implements Parking {
             if (parkingLocation.isPresent()) {
                 int i = parkingLocation.get().row;
 
-                for (int j = parkingLocation.get().row; j < parkingLocation.get().column + 5; ++j) {
+                for (int j = parkingLocation.get().column; j < parkingLocation.get().column + 5; ++j) {
                     parkingPlaces[i][j] = false;
                 }
 
@@ -92,18 +87,26 @@ public class ParkingService implements Parking {
             int numberOfEmptyPlaces = 0;
 
             for (int j = 0; j < parkingPlaces[i].length; ++j) {
-                if (!parkingPlaces[i][j]) {
+                if (parkingPlaces[i][j]) {
                     numberOfEmptyPlaces++;
                 } else {
                     numberOfEmptyPlaces = 0;
                 }
 
                 if (numberOfEmptyPlaces == 5) {
-                    return Optional.of(new ParkingLocation(i, j - 5));
+                    return Optional.of(new ParkingLocation(i, j - 4));
                 }
             }
         }
 
         return Optional.empty();
+    }
+
+    private int calculateAvailableSpaces() {
+        return Arrays.stream(parkingPlaces)
+                     .mapToInt(row -> (int) IntStream.range(0, row.length)
+                                                     .mapToObj(i -> row[i]).filter(p -> p)
+                                                     .count())
+                     .sum();
     }
 }

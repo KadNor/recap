@@ -57,12 +57,12 @@ public class Ferrari implements Car {
         boolean gasRemained = true;
 
         if (gasTankState < requiredGas) {
-            mileage -= gasTankState / MILES_PER_GALLON;
+            mileage += gasTankState / MILES_PER_GALLON;
             gasTankState = 0;
 
             gasRemained = false;
         } else {
-            mileage -= milesToDrive;
+            mileage += milesToDrive;
             gasTankState -= requiredGas;
         }
 
